@@ -1,9 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Melee/spell hit detection. Minimal single-player stub: detects colliders on the enemy
-/// layer and logs them. Actual damage application is wired up once a Health system exists.
-/// </summary>
+/// <summary>Melee/spell hit detection - finds a target's Health component and damages it.</summary>
 public class Combat : MonoBehaviour
 {
     private const int AttackDamage = 3;
@@ -49,7 +46,21 @@ public class Combat : MonoBehaviour
             return;
         }
 
-        LogDebug($"attack pressed - would deal {damageAmount} damage to {enemyHits.Length} target(s) (Health system not built yet)");
+        foreach (Collider2D enemyHit in enemyHits)
+        {
+            Health health = enemyHit.GetComponent<Health>()
+                ?? enemyHit.GetComponentInParent<Health>()
+                ?? enemyHit.GetComponentInChildren<Health>();
+
+            if (health != null)
+            {
+                health.ChangeHealth(-damageAmount, transform.position);
+                LogDebug($"attack pressed - hit {enemyHit.gameObject.name} for {damageAmount} damage");
+                return;
+            }
+        }
+
+        LogDebug("attack pressed - enemy collider found but no Health component on collider/parent/child");
     }
 
     public void AttackAnimationFinished()

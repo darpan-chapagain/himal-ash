@@ -1,12 +1,10 @@
 using UnityEngine;
 
-/// <summary>
-/// Minimal single-player stub: exposes the entry points a future Health/Enemy system
-/// will call to hurt or kill the player. Not wired to anything yet on its own.
-/// </summary>
+/// <summary>Bridges the player's Health events into FSM transitions (Damaged/Death).</summary>
 public class Damage : MonoBehaviour
 {
     [SerializeField] private Player player;
+    [SerializeField] private Health health;
 
     [Header("Knockback Settings")]
     [SerializeField] private float knockbackDuration = 0.28f;
@@ -15,9 +13,24 @@ public class Damage : MonoBehaviour
     private void Awake()
     {
         player = player != null ? player : GetComponent<Player>() ?? GetComponentInParent<Player>();
+        health = health != null ? health : GetComponent<Health>() ?? GetComponentInParent<Health>();
     }
 
-    public void ApplyDamage(Vector2 sourcePosition)
+    private void OnEnable()
+    {
+        if (health == null) return;
+        health.OnDamaged += HandleDamage;
+        health.OnDeath += HandleDeath;
+    }
+
+    private void OnDisable()
+    {
+        if (health == null) return;
+        health.OnDamaged -= HandleDamage;
+        health.OnDeath -= HandleDeath;
+    }
+
+    private void HandleDamage(Vector2 sourcePosition)
     {
         if (player == null || player._isDead) return;
 
@@ -25,7 +38,7 @@ public class Damage : MonoBehaviour
         player.ChangeState(new PlayerDamagedState(player, knockbackDir, knockbackForce, knockbackDuration));
     }
 
-    public void ApplyFatalDamage(Vector2 sourcePosition)
+    private void HandleDeath(Vector2 sourcePosition)
     {
         if (player == null) return;
         player.HandleFatalDamage(sourcePosition);
