@@ -14,8 +14,8 @@ TagManager:
   - Ground
   - Enemy
   - Player
-  -
-  -
+  - 
+  - 
   - 
   - 
   - 
@@ -38,6 +38,21 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background_Sky
+    uniqueID: 3379207127
+    locked: 0
+  - name: 'Background_Far '
+    uniqueID: 2366754489
+    locked: 0
+  - name: Background_Mid
+    uniqueID: 2081210813
+    locked: 0
+  - name: Background_Near
+    uniqueID: 570038201
+    locked: 0
+  - name: Foreground
+    uniqueID: 2439495711
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
