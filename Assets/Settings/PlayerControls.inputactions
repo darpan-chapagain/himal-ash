@@ -218,6 +218,17 @@
                 },
                 {
                     "name": "",
+                    "id": "22f0149c-fc9e-4a54-832f-9cb17c33456a",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse;Gamepad",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f67ddc17-90bf-47c5-cf00-ce2b9397a52f",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
@@ -279,15 +290,27 @@
             "name": "Keyboard&Mouse",
             "bindingGroup": "Keyboard&Mouse",
             "devices": [
-                { "devicePath": "<Keyboard>", "isOptional": false, "isOR": false },
-                { "devicePath": "<Mouse>", "isOptional": false, "isOR": false }
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
             ]
         },
         {
             "name": "Gamepad",
             "bindingGroup": "Gamepad",
             "devices": [
-                { "devicePath": "<Gamepad>", "isOptional": false, "isOR": false }
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
             ]
         }
     ]
