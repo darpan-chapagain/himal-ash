@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 809540466055952479}
   - component: {fileID: 8964850176495688874}
   - component: {fileID: 1122311214347715452}
+  - component: {fileID: 3520253542289549371}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -324,6 +325,7 @@ MonoBehaviour:
   playerInput: {fileID: 8695461015710419362}
   combat: {fileID: 9153752438335262931}
   damage: {fileID: 809540466055952479}
+  magic: {fileID: 3520253542289549371}
   animator: {fileID: 0}
 --- !u!114 &1122311214347715452
 MonoBehaviour:
@@ -339,3 +341,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 10
   currentHealth: 0
+--- !u!114 &3520253542289549371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5580436639247578093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e0ca3885763aa048a3343967031f832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Magic
+  player: {fileID: 0}
+  availableSpells:
+  - {fileID: 11400000, guid: fe8f2021e26e782418e5c75d102496c1, type: 2}
+  - {fileID: 11400000, guid: c6a79c25b17824e4c9a3148c40e65c76, type: 2}

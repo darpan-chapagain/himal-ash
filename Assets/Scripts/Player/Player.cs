@@ -115,6 +115,7 @@ public class Player : MonoBehaviour
     public PlayerInput playerInput;
     public Combat combat;
     public Damage damage;
+    public Magic magic;
     public Animator animator;
 
     #endregion
@@ -139,6 +140,7 @@ public class Player : MonoBehaviour
     private InputAction _jumpAction;
     private InputAction _attackAction;
     private InputAction _spellcastAction;
+    private InputAction _switchSpellAction;
     private InputAction _blockAction;
 
     private float _lastTapTime;
@@ -153,7 +155,7 @@ public class Player : MonoBehaviour
     public bool blockPressed { get; private set; }
     public bool blockReleased { get; private set; }
 
-    private bool _prevJump, _prevAttack, _prevSpell, _prevBlock;
+    private bool _prevJump, _prevAttack, _prevSpell, _prevBlock, _prevSwitchSpell;
     private int _lastProcessedAttackStep;
 
     #endregion
@@ -182,6 +184,8 @@ public class Player : MonoBehaviour
             combat = GetComponent<Combat>() ?? GetComponentInChildren<Combat>();
         if (damage == null)
             damage = GetComponent<Damage>() ?? GetComponentInChildren<Damage>();
+        if (magic == null)
+            magic = GetComponent<Magic>() ?? GetComponentInChildren<Magic>();
     }
 
     private void Start()
@@ -231,6 +235,7 @@ public class Player : MonoBehaviour
         _jumpAction = playerInput.actions["Jump"];
         _attackAction = playerInput.actions["Attack"];
         _spellcastAction = playerInput.actions["Spellcast"];
+        _switchSpellAction = playerInput.actions["SwitchSpell"];
         _blockAction = playerInput.actions["Block"];
     }
 
@@ -260,6 +265,7 @@ public class Player : MonoBehaviour
         bool jumpDown = _jumpAction != null && _jumpAction.IsPressed();
         bool attackDown = _attackAction != null && _attackAction.IsPressed() && !pointerOverUI;
         bool spellDown = _spellcastAction != null && _spellcastAction.IsPressed() && !pointerOverUI;
+        bool switchSpellDown = _switchSpellAction != null && _switchSpellAction.IsPressed() && !pointerOverUI;
         bool blockDown = _blockAction != null && _blockAction.IsPressed() && !pointerOverUI;
 
         bool grounded = IsGrounded();
@@ -276,6 +282,7 @@ public class Player : MonoBehaviour
         attackReleased = !attackDown && _prevAttack;
         bool spellPressed = spellDown && !_prevSpell;
         spellCastPressed = spellPressed;
+        bool switchSpellPressed = switchSpellDown && !_prevSwitchSpell;
         blockPressed = blockDown && !_prevBlock;
         blockReleased = !blockDown && _prevBlock;
 
@@ -293,6 +300,9 @@ public class Player : MonoBehaviour
         if (spellPressed)
             TryEnterSpellCastState();
 
+        if (switchSpellPressed && magic != null)
+            magic.NextSpell();
+
         currentState?.FixedUpdate();
         currentState?.Update();
 
@@ -304,6 +314,7 @@ public class Player : MonoBehaviour
         _prevJump = jumpDown;
         _prevAttack = attackDown;
         _prevSpell = spellDown;
+        _prevSwitchSpell = switchSpellDown;
         _prevBlock = blockDown;
     }
 
@@ -643,12 +654,15 @@ public class Player : MonoBehaviour
     {
         if (spellCastState == null) { SpellAttack(); return; }
         if (currentState is PlayerSpellCastState) return;
+        if (magic != null && !magic.CanCastCurrentSpell()) return;
         ChangeState(spellCastState);
     }
 
     public void SpellAttack()
     {
-        if (combat != null)
+        if (magic != null)
+            magic.SpellCastHitFrame();
+        else if (combat != null)
             combat.TryAttack(SpellDamage);
     }
 

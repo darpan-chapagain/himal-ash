@@ -45,17 +45,21 @@ public class DataPersistenceManager : MonoBehaviour
         Health health = player.GetComponent<Health>() ?? player.GetComponentInChildren<Health>();
         int savedHealth = health != null ? Mathf.RoundToInt(health.GetHealth()) : 0;
 
+        Magic magic = player.magic;
+        string equippedSpellId = magic != null ? BuildSpellId(magic.CurrentSpell) : null;
+
         PlayerSaveData data = new PlayerSaveData
         {
             PlayerId = PlayerId,
             SceneName = SceneManager.GetActiveScene().name,
             X = player.transform.position.x,
             Y = player.transform.position.y,
-            Health = savedHealth
+            Health = savedHealth,
+            EquippedSpellId = equippedSpellId
         };
 
         _saveManager.SavePlayerData(data);
-        Debug.Log($"Game saved: pos=({data.X}, {data.Y}) health={data.Health} scene={data.SceneName}");
+        Debug.Log($"Game saved: pos=({data.X}, {data.Y}) health={data.Health} scene={data.SceneName} spell={data.EquippedSpellId}");
     }
 
     public void LoadGame()
@@ -84,7 +88,32 @@ public class DataPersistenceManager : MonoBehaviour
         if (health != null)
             health.SetHealth(data.Health);
 
-        Debug.Log($"Game loaded: pos=({data.X}, {data.Y}) health={data.Health}");
+        Magic magic = player.magic;
+        if (magic != null && !string.IsNullOrWhiteSpace(data.EquippedSpellId))
+        {
+            var spells = magic.AvailableSpells;
+            for (int i = 0; i < spells.Count; i++)
+            {
+                if (BuildSpellId(spells[i]) == data.EquippedSpellId)
+                {
+                    magic.SetCurrentSpellIndex(i);
+                    break;
+                }
+            }
+        }
+
+        Debug.Log($"Game loaded: pos=({data.X}, {data.Y}) health={data.Health} spell={data.EquippedSpellId}");
+    }
+
+    private static string BuildSpellId(SpellSO spell)
+    {
+        if (spell == null) return null;
+
+        string rawId = string.IsNullOrWhiteSpace(spell.spellName) ? spell.name : spell.spellName;
+        if (string.IsNullOrWhiteSpace(rawId))
+            return null;
+
+        return rawId.Trim().ToLowerInvariant().Replace(" ", "_");
     }
 
     private void OnDestroy()

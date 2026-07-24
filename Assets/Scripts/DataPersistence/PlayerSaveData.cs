@@ -10,5 +10,6 @@ public class PlayerSaveData
     public float X { get; set; }
     public float Y { get; set; }
     public int Health { get; set; }
+    public string EquippedSpellId { get; set; }
     public long SavedAtTicks { get; set; }
 }

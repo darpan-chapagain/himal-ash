@@ -24,6 +24,9 @@ public class PlayerSpellCastState : PlayerState
         if (player.combat != null)
             player.combat.ResetAttackHitGuard();
 
+        if (player.magic != null)
+            player.magic.ResetCast();
+
         player._isIdle = false;
         player._isWalking = false;
         player._isSprinting = false;
