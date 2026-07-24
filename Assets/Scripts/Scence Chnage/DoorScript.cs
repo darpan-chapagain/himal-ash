@@ -3,7 +3,8 @@ using UnityEngine;
 /// <summary>Trigger volume that requests a scene transition once the Player enters it.</summary>
 public class DoorScript : MonoBehaviour
 {
-    [SerializeField] private string targetSceneName = "Level2";
+    [SerializeField, Tooltip("Scene to load when a Player enters. Leave empty if this door has no valid destination yet.")]
+    private string targetSceneName = "Level2";
     [SerializeField] private string spawnId = "Spawn_A";
 
     private bool _isTransitioning;
@@ -34,10 +35,13 @@ public class DoorScript : MonoBehaviour
     {
         if (_isTransitioning || _playersInside <= 0) return;
 
-        _isTransitioning = true;
-        Debug.Log($"DoorScript: Player entered door -> would transition to '{targetSceneName}' at spawn '{spawnId}'.");
+        if (string.IsNullOrWhiteSpace(targetSceneName))
+        {
+            Debug.Log("DoorScript: Player entered door, but no destination scene is configured yet.");
+            return;
+        }
 
-        // No RoomTransitionManager exists in this project yet (the reference's scene-transition
-        // coordinator). Wire this up to it once that system is built; for now this only logs.
+        _isTransitioning = true;
+        RoomTransitionManager.RequestTransition(targetSceneName, spawnId);
     }
 }
